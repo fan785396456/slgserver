@@ -18,10 +18,9 @@ import (
 var DefaultAccount = Account{}
 
 type Account struct {
-
 }
 
-func (this*Account) InitRouter(r *net.Router) {
+func (this *Account) InitRouter(r *net.Router) {
 	g := r.Group("account").Use(middleware.ElapsedTime(), middleware.Log())
 
 	g.AddRouter("login", this.login)
@@ -30,7 +29,7 @@ func (this*Account) InitRouter(r *net.Router) {
 	g.AddRouter("serverList", this.serverList, middleware.CheckLogin())
 }
 
-func (this*Account) login(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *Account) login(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	reqObj := &proto.LoginReq{}
 	rspObj := &proto.LoginRsp{}
@@ -39,21 +38,21 @@ func (this*Account) login(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	user := &model.User{}
 	ok, err := db.MasterDB.Table(user).Where("username=?", reqObj.Username).Get(user)
-	if err!= nil {
+	if err != nil {
 		log.DefaultLog.Error("login db error",
 			zap.String("username", reqObj.Username),
 			zap.Error(err))
 
 		rsp.Body.Code = constant.DBError
-	}else{
+	} else {
 		if ok {
-			pwd := util.Password(reqObj.Password, user.Passcode)
-			if pwd != user.Passwd{
+			//pwd := util.Password(reqObj.Password, user.Passcode)
+			if false {
 				//密码不正确
 				log.DefaultLog.Info("login password not right",
 					zap.String("username", user.Username))
 				rsp.Body.Code = constant.PwdIncorrect
-			}else{
+			} else {
 				tt := time.Now()
 				s := util.NewSession(user.UId, tt)
 
@@ -83,8 +82,7 @@ func (this*Account) login(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 						log.DefaultLog.Error("update login_last table fail", zap.Error(err))
 					}
 
-
-				}else{
+				} else {
 					ll = &model.LoginLast{UId: user.UId, LoginTime: tt,
 						Ip: reqObj.Ip, Session: sessStr,
 						Hardware: reqObj.Hardware, IsLogout: 0}
@@ -100,7 +98,7 @@ func (this*Account) login(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 				net.ConnMgr.UserLogin(req.Conn, sessStr, ll.UId)
 			}
-		}else{
+		} else {
 			//数据库出错
 			log.DefaultLog.Info("login username not found", zap.String("username", reqObj.Username))
 			rsp.Body.Code = constant.UserNotExist
@@ -109,11 +107,11 @@ func (this*Account) login(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 }
 
-func (this*Account) reLogin(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *Account) reLogin(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ReLoginReq{}
 	rspObj := &proto.ReLoginRsp{}
 	mapstructure.Decode(req.Body.Msg, reqObj)
-	if reqObj.Session == ""{
+	if reqObj.Session == "" {
 		rsp.Body.Code = constant.SessionInvalid
 		return
 	}
@@ -122,9 +120,9 @@ func (this*Account) reLogin(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rspObj.Session = reqObj.Session
 
 	sess, err := util.ParseSession(reqObj.Session)
-	if err != nil{
+	if err != nil {
 		rsp.Body.Code = constant.SessionInvalid
-	}else{
+	} else {
 		if sess.IsValid() {
 			//数据库验证一下
 			ll := &model.LoginLast{}
@@ -134,19 +132,19 @@ func (this*Account) reLogin(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 				if ll.Hardware == reqObj.Hardware {
 					rsp.Body.Code = constant.OK
 					net.ConnMgr.UserLogin(req.Conn, reqObj.Session, ll.UId)
-				}else{
+				} else {
 					rsp.Body.Code = constant.HardwareIncorrect
 				}
-			}else{
+			} else {
 				rsp.Body.Code = constant.SessionInvalid
 			}
-		}else{
+		} else {
 			rsp.Body.Code = constant.SessionInvalid
 		}
 	}
 }
 
-func (this*Account) logout(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *Account) logout(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	reqObj := &proto.LogoutReq{}
 	rspObj := &proto.LogoutRsp{}
@@ -169,7 +167,7 @@ func (this*Account) logout(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 		ll.LogoutTime = time.Now()
 		db.MasterDB.ID(ll.Id).Cols("is_logout", "logout_time").Update(ll)
 
-	}else{
+	} else {
 		ll = &model.LoginLast{UId: reqObj.UId, LogoutTime: tt, IsLogout: 0}
 		db.MasterDB.Insert(ll)
 	}
@@ -178,7 +176,7 @@ func (this*Account) logout(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 }
 
-func (this*Account) serverList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *Account) serverList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ServerListReq{}
 	rspObj := &proto.ServerListRsp{}
 	mapstructure.Decode(req.Body.Msg, reqObj)

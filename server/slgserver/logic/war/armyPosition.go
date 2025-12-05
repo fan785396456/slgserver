@@ -8,7 +8,7 @@ import (
 	"github.com/llr104/slgserver/server/slgserver/static_conf/skill"
 )
 
-//真正的战斗属性
+// 真正的战斗属性
 type realBattleAttr struct {
 	force    int //武力
 	strategy int //策略
@@ -17,7 +17,7 @@ type realBattleAttr struct {
 	destroy  int //破坏
 }
 
-//战斗位置的属性
+// 战斗位置的属性
 type armyPosition struct {
 	general  *model.General
 	soldiers int //兵力
@@ -32,7 +32,7 @@ type armyPosition struct {
 	skills []*attachSkill
 }
 
-//攻击前触发技能
+// 攻击前触发技能
 func (this *armyPosition) hitBefore() []*attachSkill {
 	ret := make([]*attachSkill, 0)
 
@@ -63,7 +63,7 @@ func (this *armyPosition) hitBefore() []*attachSkill {
 	return ret
 }
 
-//攻击后触发技能
+// 攻击后触发技能
 func (this *armyPosition) hitAfter() []*attachSkill {
 	ret := make([]*attachSkill, 0)
 
@@ -125,7 +125,7 @@ func (this *armyPosition) checkNextRound() {
 	this.skills = skills
 }
 
-//计算真正的战斗属性，包含了技能
+// 计算真正的战斗属性，包含了技能
 func (this *armyPosition) calRealBattleAttr() realBattleAttr {
 	attr := realBattleAttr{}
 	attr.defense = this.defense

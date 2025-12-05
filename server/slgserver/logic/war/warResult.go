@@ -42,23 +42,27 @@ func (this *warResult) battle() {
 			this.camp.defense.SoldierArray[i] = this.camp.defensePos[i].soldiers
 		}
 	}
-
-	if this.camp.attackPos[0].soldiers == 0 {
+	if this.camp.attackPos[0] == nil {
 		this.result = 0
-	} else if this.camp.defensePos[0] != nil && this.camp.defensePos[0].soldiers != 0 {
-		this.result = 1
 	} else {
-		this.result = 2
+		if this.camp.attackPos[0].soldiers == 0 {
+			this.result = 0
+		} else if this.camp.defensePos[0] != nil && this.camp.defensePos[0].soldiers != 0 {
+			this.result = 1
+		} else {
+			this.result = 2
+		}
 	}
+
 }
 
-//打击前技能
+// 打击前技能
 func (this *warResult) beforeSkill(att *armyPosition, our []*armyPosition, enemy []*armyPosition) []*skillHit {
 	beforeSkills := att.hitBefore()
 	return this.acceptSkill(beforeSkills, att, our, enemy)
 }
 
-//打击后技能
+// 打击后技能
 func (this *warResult) afterSkill(att *armyPosition, our []*armyPosition, enemy []*armyPosition) []*skillHit {
 	afterSkills := att.hitAfter()
 	return this.acceptSkill(afterSkills, att, our, enemy)
@@ -133,7 +137,7 @@ func (this *warResult) _acceptSkill_(ps []*armyPosition, skill *attachSkill, sh 
 	}
 }
 
-//回合
+// 回合
 func (this *warResult) runRound() (*warRound, bool) {
 
 	this.curRound = &warRound{}
@@ -173,6 +177,9 @@ func (this *warResult) runRound() (*warRound, bool) {
 	}
 	//清理过期的技能功能效果
 	for _, attack := range attacks {
+		if attack == nil {
+			continue
+		}
 		attack.checkNextRound()
 	}
 
