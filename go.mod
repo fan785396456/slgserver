@@ -1,4 +1,4 @@
-module github.com/llr104/slgserver
+module github.com/fan785396456/slgserver
 
 go 1.14
 

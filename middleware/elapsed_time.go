@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/net"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/net"
 	"go.uber.org/zap"
 )
 
@@ -15,7 +15,7 @@ func ElapsedTime() net.MiddlewareFunc {
 			bt := time.Now().UnixNano()
 			next(req, rsp)
 			et := time.Now().UnixNano()
-			diff := (et - bt)/int64(time.Millisecond)
+			diff := (et - bt) / int64(time.Millisecond)
 
 			log.DefaultLog.Info("ElapsedTime:",
 				zap.String("msgName", req.Body.Name),

@@ -5,15 +5,16 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/db"
+	myhttp "github.com/fan785396456/slgserver/server/httpserver"
+	"github.com/fan785396456/slgserver/server/loginserver/model"
+	"github.com/fan785396456/slgserver/util"
 	"github.com/labstack/echo/v4"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/db"
-	myhttp "github.com/llr104/slgserver/server/httpserver"
-	"github.com/llr104/slgserver/server/loginserver/model"
-	"github.com/llr104/slgserver/util"
 )
 
 type UserLogic struct{}
+
 var DefaultUser = UserLogic{}
 
 func (self UserLogic) CreateUser(ctx echo.Context) error {
@@ -30,17 +31,17 @@ func (self UserLogic) CreateUser(ctx echo.Context) error {
 		user := &model.User{
 			Username: account,
 			Passcode: passcode,
-			Passwd: util.Password(pwd, passcode),
+			Passwd:   util.Password(pwd, passcode),
 			Hardware: hardware,
-			Ctime: time.Now(),
-			Mtime: time.Now()}
+			Ctime:    time.Now(),
+			Mtime:    time.Now()}
 
 		if _, err := db.MasterDB.Insert(user); err != nil {
 			return myhttp.New("数据库出错", constant.DBError)
-		} else{
+		} else {
 			return nil
 		}
-	}else{
+	} else {
 		return myhttp.New("用户名或密码是空", constant.InvalidParam)
 	}
 }
@@ -51,30 +52,30 @@ func (self UserLogic) ChangePassword(ctx echo.Context) error {
 	newpwd := ctx.QueryParam("newpassword")
 
 	user := &model.User{}
-	if len(account) > 0 && len(pwd) > 0 && len(newpwd) > 0{
+	if len(account) > 0 && len(pwd) > 0 && len(newpwd) > 0 {
 		if _, err := db.MasterDB.Where("username=?", account).Get(user); err != nil {
 			return myhttp.New("数据库出错", constant.DBError)
-		}else{
+		} else {
 			if util.Password(pwd, user.Passcode) == user.Passwd {
 				passcode := fmt.Sprintf("%x", rand.Int31())
 				changeData := map[string]interface{}{
-					"passwd": util.Password(newpwd, passcode),
+					"passwd":   util.Password(newpwd, passcode),
 					"passcode": passcode,
-					"Mtime": time.Now(),
+					"Mtime":    time.Now(),
 				}
 
-				if _, err := db.MasterDB.Table(user).Where("username=?", account).Update(changeData); err !=nil {
+				if _, err := db.MasterDB.Table(user).Where("username=?", account).Update(changeData); err != nil {
 					return myhttp.New("数据库出错", constant.DBError)
-				}else{
+				} else {
 					return nil
 				}
 
-			}else{
+			} else {
 				return myhttp.New("原密码错误", constant.PwdIncorrect)
 			}
 		}
 
-	}else{
+	} else {
 		return myhttp.New("用户名或密码是空", constant.InvalidParam)
 	}
 }

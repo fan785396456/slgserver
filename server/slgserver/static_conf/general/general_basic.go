@@ -8,25 +8,25 @@ import (
 	"os"
 	"path"
 
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/log"
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/log"
 	"go.uber.org/zap"
 )
 
 var GenBasic Basic
 
 type gLevel struct {
-	Level		int8`json:"level"`
-	Exp			int `json:"exp"`
-	Soldiers	int `json:"soldiers"`
+	Level    int8 `json:"level"`
+	Exp      int  `json:"exp"`
+	Soldiers int  `json:"soldiers"`
 }
 
 type Basic struct {
-	Title	string    `json:"title"`
-	Levels	[]gLevel `json:"levels"`
+	Title  string   `json:"title"`
+	Levels []gLevel `json:"levels"`
 }
 
-func (this *Basic) Load()  {
+func (this *Basic) Load() {
 	jsonDir := config.File.MustValue("logic", "json_data", "../data/conf/")
 	fileName := path.Join(jsonDir, "general", "general_basic.json")
 	jdata, err := ioutil.ReadFile(fileName)
@@ -43,18 +43,18 @@ func (this *Basic) Load()  {
 	GenArms.Load()
 }
 
-func (this *Basic) GetLevel(l int8) (*gLevel, error){
-	if l <= 0{
+func (this *Basic) GetLevel(l int8) (*gLevel, error) {
+	if l <= 0 {
 		return nil, errors.New("level error")
 	}
-	if int(l) <= len(this.Levels){
+	if int(l) <= len(this.Levels) {
 		return &this.Levels[l-1], nil
-	}else{
+	} else {
 		return nil, errors.New("level error")
 	}
 }
 
-func (this*Basic) ExpToLevel(exp int) (int8, int){
+func (this *Basic) ExpToLevel(exp int) (int8, int) {
 	var level int8 = 0
 	limitExp := this.Levels[len(this.Levels)-1].Exp
 	for _, v := range this.Levels {
@@ -65,8 +65,7 @@ func (this*Basic) ExpToLevel(exp int) (int8, int){
 
 	if limitExp < exp {
 		return level, limitExp
-	}else{
+	} else {
 		return level, exp
 	}
 }
-

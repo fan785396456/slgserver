@@ -1,16 +1,16 @@
 package army
 
 import (
-	"github.com/llr104/slgserver/server/slgserver/global"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/logic/union"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/server/slgserver/global"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/union"
+	"github.com/fan785396456/slgserver/util"
 )
 
 var ViewWidth = 5
 var ViewHeight = 5
 
-//是否在视野范围内
+// 是否在视野范围内
 func ArmyIsInView(rid, x, y int) bool {
 	unionId := union.GetUnionId(rid)
 	for i := util.MaxInt(x-ViewWidth, 0); i < util.MinInt(x+ViewWidth, global.MapWith); i++ {

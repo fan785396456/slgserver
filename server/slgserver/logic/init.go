@@ -3,10 +3,10 @@ package logic
 import (
 	"time"
 
-	"github.com/llr104/slgserver/server/slgserver/logic/army"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/logic/union"
-	"github.com/llr104/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/army"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/union"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
 )
 
 var Union *union.UnionLogic
@@ -28,7 +28,7 @@ func BeforeInit() {
 	model.MapResTypeLevel = mgr.NMMgr.MapResTypeLevel
 }
 
-//逻辑相关的初始化放在这里
+// 逻辑相关的初始化放在这里
 func Init() {
 	Union = union.Instance()
 	ArmyLogic = army.Instance()

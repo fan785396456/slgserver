@@ -1,6 +1,6 @@
 package proto
 
-import "github.com/llr104/slgserver/server/slgserver/static_conf"
+import "github.com/fan785396456/slgserver/server/slgserver/static_conf"
 
 type GSkill struct {
 	Id    int `json:"id"`
@@ -99,7 +99,7 @@ type Army struct {
 	End      int64                       `json:"end"`   //出征结束时间
 }
 
-//配置武将
+// 配置武将
 type DisposeReq struct {
 	CityId    int  `json:"cityId"`    //城市id
 	GeneralId int  `json:"generalId"` //将领id
@@ -111,7 +111,7 @@ type DisposeRsp struct {
 	Army Army `json:"army"`
 }
 
-//征兵
+// 征兵
 type ConscriptReq struct {
 	ArmyId int   `json:"armyId"` //队伍id
 	Cnts   []int `json:"cnts"`   //征兵人数
@@ -122,7 +122,7 @@ type ConscriptRsp struct {
 	RoleRes RoleRes `json:"role_res"`
 }
 
-//派遣队伍
+// 派遣队伍
 type AssignArmyReq struct {
 	ArmyId int  `json:"armyId"` //队伍id
 	Cmd    int8 `json:"cmd"`    //命令：0:空闲 1:攻击 2：驻军 3:返回
@@ -134,7 +134,7 @@ type AssignArmyRsp struct {
 	Army Army `json:"army"`
 }
 
-//抽卡
+// 抽卡
 type DrawGeneralReq struct {
 	DrawTimes int `json:"drawTimes"` //抽卡次数
 }
@@ -143,7 +143,7 @@ type DrawGeneralRsp struct {
 	Generals []General `json:"generals"`
 }
 
-//合成
+// 合成
 type ComposeGeneralReq struct {
 	CompId int   `json:"compId"`
 	GIds   []int `json:"gIds"` //合成材料
@@ -153,7 +153,7 @@ type ComposeGeneralRsp struct {
 	Generals []General `json:"generals"`
 }
 
-//加点
+// 加点
 type AddPrGeneralReq struct {
 	CompId      int `json:"compId"`
 	ForceAdd    int `json:"forceAdd"`

@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
 )
 
 var DefaultSkill = Skill{}

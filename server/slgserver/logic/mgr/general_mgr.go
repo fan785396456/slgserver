@@ -4,13 +4,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/general"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/npc"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/general"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/npc"
+	"github.com/fan785396456/slgserver/util"
 	"go.uber.org/zap"
 )
 
@@ -41,7 +41,7 @@ func (this *generalMgr) updatePhysicalPower() {
 	}
 }
 
-//创建npc
+// 创建npc
 func (this *generalMgr) createNPC() ([]*model.General, bool) {
 
 	gs := make([]*model.General, 0)
@@ -133,7 +133,7 @@ func (this *generalMgr) GetByRId(rid int) ([]*model.General, bool) {
 	}
 }
 
-//查找将领
+// 查找将领
 func (this *generalMgr) GetByGId(gid int) (*model.General, bool) {
 	this.mutex.RLock()
 	g, ok := this.genByGId[gid]
@@ -166,7 +166,7 @@ func (this *generalMgr) GetByGId(gid int) (*model.General, bool) {
 	}
 }
 
-//这个角色是否有这个武将
+// 这个角色是否有这个武将
 func (this *generalMgr) HasGeneral(rid int, gid int) (*model.General, bool) {
 	r, ok := this.GetByRId(rid)
 	if ok {
@@ -245,7 +245,7 @@ func (this *generalMgr) RandCreateGeneral(rid int, nums int) ([]*model.General, 
 	return gs, true
 }
 
-//获取npc武将
+// 获取npc武将
 func (this *generalMgr) GetNPCGenerals(cfgIds []int, levels []int8) ([]model.General, bool) {
 	if len(cfgIds) != len(levels) {
 		return nil, false
@@ -278,7 +278,7 @@ func (this *generalMgr) GetDestroy(army *model.Army) int {
 	return destroy
 }
 
-//体力是否足够
+// 体力是否足够
 func (this *generalMgr) PhysicalPowerIsEnough(army *model.Army, cost int) bool {
 	for _, g := range army.Gens {
 		if g == nil {
@@ -291,7 +291,7 @@ func (this *generalMgr) PhysicalPowerIsEnough(army *model.Army, cost int) bool {
 	return true
 }
 
-//尝试使用体力
+// 尝试使用体力
 func (this *generalMgr) TryUsePhysicalPower(army *model.Army, cost int) bool {
 
 	if this.PhysicalPowerIsEnough(army, cost) == false {

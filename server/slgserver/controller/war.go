@@ -1,31 +1,30 @@
 package controller
 
 import (
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
 	"go.uber.org/zap"
 )
 
 var DefaultWar = War{}
 
 type War struct {
-
 }
 
-func (this*War) InitRouter(r *net.Router) {
+func (this *War) InitRouter(r *net.Router) {
 	g := r.Group("war").Use(middleware.ElapsedTime(),
 		middleware.Log(), middleware.CheckRole())
 	g.AddRouter("report", this.report)
 	g.AddRouter("read", this.read)
 }
 
-func (this*War) report(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *War) report(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.WarReportReq{}
 	rspObj := &proto.WarReportRsp{}
 
@@ -41,7 +40,7 @@ func (this*War) report(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	err := db.MasterDB.Table(model.WarReport{}).Where("a_rid=? or d_rid=?",
 		role.RId, role.RId).Desc("ctime").Limit(100, 0).Find(&l)
 
-	if err != nil{
+	if err != nil {
 		log.DefaultLog.Warn("db error", zap.Error(err))
 		rsp.Body.Code = constant.DBError
 		return
@@ -53,7 +52,7 @@ func (this*War) report(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 }
 
-func (this*War) read(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *War) read(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.WarReadReq{}
 	rspObj := &proto.WarReadRsp{}
 
@@ -75,7 +74,7 @@ func (this*War) read(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 		if err != nil {
 			log.DefaultLog.Error("db error", zap.Error(err))
 		}
-	}else{
+	} else {
 		wr := &model.WarReport{}
 		ok, err := db.MasterDB.Table(model.WarReport{}).Where("id=?",
 			reqObj.Id).Get(wr)
@@ -91,11 +90,11 @@ func (this*War) read(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 				wr.AttackIsRead = true
 				db.MasterDB.Table(wr).ID(wr.Id).Cols("a_is_read").Update(wr)
 				rsp.Body.Code = constant.OK
-			}else if wr.DefenseRid == role.RId {
+			} else if wr.DefenseRid == role.RId {
 				wr.DefenseIsRead = true
 				db.MasterDB.Table(wr).ID(wr.Id).Cols("d_is_read").Update(wr)
 				rsp.Body.Code = constant.OK
-			}else{
+			} else {
 				rsp.Body.Code = constant.InvalidParam
 			}
 		}

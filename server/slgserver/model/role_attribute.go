@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
 	"go.uber.org/zap"
 	"xorm.io/xorm"
 )
 
 /*******db 操作begin********/
 var dbRAttrMgr *roleAttrDBMgr
+
 func init() {
 	dbRAttrMgr = &roleAttrDBMgr{rattr: make(chan *RoleAttribute, 100)}
 	go dbRAttrMgr.running()
@@ -24,50 +25,48 @@ type roleAttrDBMgr struct {
 	rattr chan *RoleAttribute
 }
 
-func (this *roleAttrDBMgr) running()  {
+func (this *roleAttrDBMgr) running() {
 	for true {
 		select {
-		case attr := <- this.rattr:
-			if attr.Id >0 {
+		case attr := <-this.rattr:
+			if attr.Id > 0 {
 				_, err := db.MasterDB.Table(attr).ID(attr.Id).Cols(
 					"parent_id", "collect_times", "last_collect_time", "pos_tags").Update(attr)
-				if err != nil{
+				if err != nil {
 					log.DefaultLog.Warn("db error", zap.Error(err))
 				}
-			}else{
+			} else {
 				log.DefaultLog.Warn("update role attr fail, because id <= 0")
 			}
 		}
 	}
 }
 
-func (this *roleAttrDBMgr) push(attr *RoleAttribute)  {
+func (this *roleAttrDBMgr) push(attr *RoleAttribute) {
 	this.rattr <- attr
 }
+
 /*******db 操作end********/
 
-
-
 type RoleAttribute struct {
-	Id              int       		`xorm:"id pk autoincr"`
-	RId             int       		`xorm:"rid"`
-	UnionId         int       		`xorm:"-"`					//联盟id
-	ParentId        int       		`xorm:"parent_id"`			//上级id（被沦陷）
-	CollectTimes    int8      		`xorm:"collect_times"`		//征收次数
-	LastCollectTime time.Time 		`xorm:"last_collect_time"`	//最后征收的时间
-	PosTags			string    		`xorm:"pos_tags"`			//位置标记
-	PosTagArray		[]proto.PosTag	`xorm:"-"`
+	Id              int            `xorm:"id pk autoincr"`
+	RId             int            `xorm:"rid"`
+	UnionId         int            `xorm:"-"`                 //联盟id
+	ParentId        int            `xorm:"parent_id"`         //上级id（被沦陷）
+	CollectTimes    int8           `xorm:"collect_times"`     //征收次数
+	LastCollectTime time.Time      `xorm:"last_collect_time"` //最后征收的时间
+	PosTags         string         `xorm:"pos_tags"`          //位置标记
+	PosTagArray     []proto.PosTag `xorm:"-"`
 }
-
 
 func (this *RoleAttribute) TableName() string {
 	return "tb_role_attribute" + fmt.Sprintf("_%d", ServerId)
 }
 
-func (this *RoleAttribute) AfterSet(name string, cell xorm.Cell){
-	if name == "pos_tags"{
-		this.PosTagArray = make([]proto.PosTag,0)
-		if cell != nil{
+func (this *RoleAttribute) AfterSet(name string, cell xorm.Cell) {
+	if name == "pos_tags" {
+		this.PosTagArray = make([]proto.PosTag, 0)
+		if cell != nil {
 			data, ok := (*cell).([]uint8)
 			if ok {
 				json.Unmarshal(data, &this.PosTagArray)
@@ -77,8 +76,8 @@ func (this *RoleAttribute) AfterSet(name string, cell xorm.Cell){
 	}
 }
 
-func (this *RoleAttribute) beforeModify()  {
-	if this.PosTagArray == nil{
+func (this *RoleAttribute) beforeModify() {
+	if this.PosTagArray == nil {
 		this.PosTagArray = make([]proto.PosTag, 0)
 	}
 	data, _ := json.Marshal(this.PosTagArray)
@@ -93,61 +92,62 @@ func (this *RoleAttribute) BeforeUpdate() {
 	this.beforeModify()
 }
 
-func (this* RoleAttribute) RemovePosTag(x, y int) {
+func (this *RoleAttribute) RemovePosTag(x, y int) {
 	tags := make([]proto.PosTag, 0)
 	for _, tag := range this.PosTagArray {
-		if tag.X != x || tag.Y != y{
+		if tag.X != x || tag.Y != y {
 			tags = append(tags, tag)
 		}
 	}
 	this.PosTagArray = tags
 }
 
-func (this* RoleAttribute) AddPosTag(x, y int, name string) {
+func (this *RoleAttribute) AddPosTag(x, y int, name string) {
 	ok := true
 	for _, tag := range this.PosTagArray {
-		if tag.X == x && tag.Y == y{
+		if tag.X == x && tag.Y == y {
 			ok = false
 			break
 		}
 	}
-	if ok{
+	if ok {
 		this.PosTagArray = append(this.PosTagArray, proto.PosTag{X: x, Y: y, Name: name})
 	}
 }
 
 /* 推送同步 begin */
-func (this *RoleAttribute) IsCellView() bool{
+func (this *RoleAttribute) IsCellView() bool {
 	return false
 }
 
-func (this *RoleAttribute) IsCanView(rid, x, y int) bool{
+func (this *RoleAttribute) IsCanView(rid, x, y int) bool {
 	return false
 }
 
-func (this *RoleAttribute) BelongToRId() []int{
+func (this *RoleAttribute) BelongToRId() []int {
 	return []int{this.RId}
 }
 
-func (this *RoleAttribute) PushMsgName() string{
+func (this *RoleAttribute) PushMsgName() string {
 	return "roleAttr.push"
 }
 
-func (this *RoleAttribute) ToProto() interface{}{
+func (this *RoleAttribute) ToProto() interface{} {
 	return nil
 }
 
-func (this *RoleAttribute) Position() (int, int){
+func (this *RoleAttribute) Position() (int, int) {
 	return -1, -1
 }
 
-func (this *RoleAttribute) TPosition() (int, int){
+func (this *RoleAttribute) TPosition() (int, int) {
 	return -1, -1
 }
 
-func (this *RoleAttribute) Push(){
+func (this *RoleAttribute) Push() {
 	net.ConnMgr.Push(this)
 }
+
 /* 推送同步 end */
 
 func (this *RoleAttribute) SyncExecute() {

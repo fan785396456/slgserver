@@ -1,18 +1,18 @@
 package run
 
 import (
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/controller"
-	"github.com/llr104/slgserver/server/slgserver/logic"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/facility"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/general"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/npc"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/skill"
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/controller"
+	"github.com/fan785396456/slgserver/server/slgserver/logic"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/facility"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/general"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/npc"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/skill"
 )
 
 var MyRouter = &net.Router{}

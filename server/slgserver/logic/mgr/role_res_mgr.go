@@ -4,13 +4,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/facility"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/facility"
+	"github.com/fan785396456/slgserver/util"
 	"go.uber.org/zap"
 )
 
@@ -23,7 +23,7 @@ var RResMgr = &roleResMgr{
 	rolesRes: make(map[int]*model.RoleRes),
 }
 
-//获取产量
+// 获取产量
 func GetYield(rid int) model.Yield {
 	by := RBMgr.GetYield(rid)
 	cy := RFMgr.GetYield(rid)
@@ -38,7 +38,7 @@ func GetYield(rid int) model.Yield {
 	return y
 }
 
-//获取仓库容量
+// 获取仓库容量
 func GetDepotCapacity(rid int) int {
 	return RFMgr.GetDepotCapacity(rid) + static_conf.Basic.Role.DepotCapacity
 }
@@ -127,7 +127,7 @@ func (this *roleResMgr) TryUseNeed(rid int, need facility.NeedRes) int {
 	}
 }
 
-//政令是否足够
+// 政令是否足够
 func (this *roleResMgr) DecreeIsEnough(rid int, cost int) bool {
 
 	this.mutex.RLock()
@@ -164,7 +164,7 @@ func (this *roleResMgr) TryUseDecree(rid int, decree int) bool {
 	}
 }
 
-//金币是否足够
+// 金币是否足够
 func (this *roleResMgr) GoldIsEnough(rid int, cost int) bool {
 
 	this.mutex.RLock()

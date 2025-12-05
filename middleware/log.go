@@ -3,8 +3,8 @@ package middleware
 import (
 	"fmt"
 
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/net"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/net"
 	"go.uber.org/zap"
 )
 

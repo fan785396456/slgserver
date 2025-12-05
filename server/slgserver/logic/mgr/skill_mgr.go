@@ -3,14 +3,14 @@ package mgr
 import (
 	"sync"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
 	"go.uber.org/zap"
 )
 
 type skillMgr struct {
-	mutex  sync.RWMutex
+	mutex    sync.RWMutex
 	skillMap map[int][]*model.Skill
 }
 
@@ -18,8 +18,7 @@ var SkillMgr = &skillMgr{
 	skillMap: make(map[int][]*model.Skill),
 }
 
-
-func (this*skillMgr) Load() {
+func (this *skillMgr) Load() {
 
 	rr := make([]*model.Skill, 0)
 	err := db.MasterDB.Find(&rr)
@@ -28,15 +27,14 @@ func (this*skillMgr) Load() {
 	}
 
 	for _, v := range rr {
-		if this.skillMap[v.RId] == nil{
+		if this.skillMap[v.RId] == nil {
 			this.skillMap[v.RId] = make([]*model.Skill, 0)
 		}
 		this.skillMap[v.RId] = append(this.skillMap[v.RId], v)
 	}
 }
 
-
-func (this*skillMgr) Get(rid int) ([]*model.Skill, bool){
+func (this *skillMgr) Get(rid int) ([]*model.Skill, bool) {
 
 	this.mutex.RLock()
 	r, ok := this.skillMap[rid]
@@ -55,27 +53,27 @@ func (this*skillMgr) Get(rid int) ([]*model.Skill, bool){
 		this.mutex.Unlock()
 
 		return m, true
-	}else{
-		if err == nil{
+	} else {
+		if err == nil {
 			log.DefaultLog.Warn("skill not found", zap.Int("rid", rid))
 			return nil, false
-		}else{
+		} else {
 			log.DefaultLog.Warn("db error", zap.Error(err))
 			return nil, false
 		}
 	}
 }
 
-func (this*skillMgr) GetSkillOrCreate(rid int, cfg int) (*model.Skill, bool){
+func (this *skillMgr) GetSkillOrCreate(rid int, cfg int) (*model.Skill, bool) {
 
 	success := true
 	m, ok := this.Get(rid)
 	var ret *model.Skill = nil
 	if ok {
 		for _, v := range m {
-			if v.CfgId != cfg{
+			if v.CfgId != cfg {
 				continue
-			}else{
+			} else {
 				ret = v
 			}
 		}
@@ -87,8 +85,8 @@ func (this*skillMgr) GetSkillOrCreate(rid int, cfg int) (*model.Skill, bool){
 		if err != nil {
 			log.DefaultLog.Warn("db error", zap.Error(err))
 			success = false
-		}else{
-			if this.skillMap[rid] == nil{
+		} else {
+			if this.skillMap[rid] == nil {
 				this.skillMap[rid] = make([]*model.Skill, 0)
 			}
 			this.skillMap[rid] = append(this.skillMap[rid], ret)

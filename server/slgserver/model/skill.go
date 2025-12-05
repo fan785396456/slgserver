@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/skill"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/skill"
 	"go.uber.org/zap"
 	"xorm.io/xorm"
 )

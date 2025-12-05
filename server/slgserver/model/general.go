@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/general"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/general"
 	"go.uber.org/zap"
 	"xorm.io/xorm"
 )
@@ -209,7 +209,7 @@ func (this *General) GetStrategy() int {
 	return 0
 }
 
-//获取阵营
+// 获取阵营
 func (this *General) GetCamp() int8 {
 	cfg, ok := general.General.GMap[this.CfgId]
 	if ok {

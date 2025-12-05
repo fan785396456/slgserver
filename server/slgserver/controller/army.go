@@ -3,19 +3,19 @@ package controller
 import (
 	"time"
 
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/global"
+	"github.com/fan785396456/slgserver/server/slgserver/logic"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/check"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/facility"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/general"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/global"
-	"github.com/llr104/slgserver/server/slgserver/logic"
-	"github.com/llr104/slgserver/server/slgserver/logic/check"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/facility"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/general"
 )
 
 var DefaultArmy = Army{}
@@ -35,7 +35,7 @@ func (this *Army) InitRouter(r *net.Router) {
 
 }
 
-//我的军队列表
+// 我的军队列表
 func (this *Army) myList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ArmyListReq{}
 	rspObj := &proto.ArmyListRsp{}
@@ -64,7 +64,7 @@ func (this *Army) myList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 }
 
-//我的某一个军队
+// 我的某一个军队
 func (this *Army) myOne(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ArmyOneReq{}
 	rspObj := &proto.ArmyOneRsp{}
@@ -94,7 +94,7 @@ func (this *Army) myOne(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 }
 
-//配置武将
+// 配置武将
 func (this *Army) dispose(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	reqObj := &proto.DisposeReq{}
@@ -244,7 +244,7 @@ func (this *Army) dispose(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rspObj.Army = army.ToProto().(proto.Army)
 }
 
-//征兵
+// 征兵
 func (this *Army) conscript(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ConscriptReq{}
 	rspObj := &proto.ConscriptRsp{}
@@ -353,7 +353,7 @@ func (this *Army) conscript(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 }
 
-//派遣队伍
+// 派遣队伍
 func (this *Army) assign(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.AssignArmyReq{}
 	rspObj := &proto.AssignArmyRsp{}
@@ -461,7 +461,7 @@ func (this *Army) __after__(reqObj *proto.AssignArmyReq, army *model.Army) int {
 	return constant.OK
 }
 
-//返回
+// 返回
 func (this *Army) __back__(army *model.Army) int {
 	if army.Cmd == model.ArmyCmdAttack ||
 		army.Cmd == model.ArmyCmdDefend ||
@@ -479,7 +479,7 @@ func (this *Army) __back__(army *model.Army) int {
 	return constant.OK
 }
 
-//攻击
+// 攻击
 func (this *Army) __attack__(reqObj *proto.AssignArmyReq, army *model.Army, role *model.Role) int {
 
 	code := this.__pre__(reqObj, army, role)
@@ -503,7 +503,7 @@ func (this *Army) __attack__(reqObj *proto.AssignArmyReq, army *model.Army, role
 	return this.__after__(reqObj, army)
 }
 
-//驻守
+// 驻守
 func (this *Army) __defend__(reqObj *proto.AssignArmyReq, army *model.Army, role *model.Role) int {
 
 	code := this.__pre__(reqObj, army, role)

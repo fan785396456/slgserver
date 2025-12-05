@@ -7,8 +7,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/log"
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/log"
 	"go.uber.org/zap"
 )
 

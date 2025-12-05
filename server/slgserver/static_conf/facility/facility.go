@@ -6,10 +6,9 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/llr104/slgserver/log"
+	"github.com/fan785396456/slgserver/log"
 	"go.uber.org/zap"
 )
-
 
 type conditions struct {
 	Type  int `json:"type"`
@@ -27,19 +26,19 @@ type facility struct {
 }
 
 type NeedRes struct {
-	Decree 		int	`json:"decree"`
-	Grain		int `json:"grain"`
-	Wood		int `json:"wood"`
-	Iron		int `json:"iron"`
-	Stone		int `json:"stone"`
-	Gold		int	`json:"gold"`
+	Decree int `json:"decree"`
+	Grain  int `json:"grain"`
+	Wood   int `json:"wood"`
+	Iron   int `json:"iron"`
+	Stone  int `json:"stone"`
+	Gold   int `json:"gold"`
 }
 
 type fLevel struct {
 	Level  int     `json:"level"`
 	Values []int   `json:"values"`
 	Need   NeedRes `json:"need"`
-	Time   int     `json:"time"`	//升级需要的时间
+	Time   int     `json:"time"` //升级需要的时间
 }
 
 func NewFacility(jsonName string) *facility {
@@ -48,7 +47,7 @@ func NewFacility(jsonName string) *facility {
 	return f
 }
 
-func (this *facility) load(jsonName string)  {
+func (this *facility) load(jsonName string) {
 
 	jdata, err := ioutil.ReadFile(jsonName)
 	if err != nil {
@@ -61,4 +60,3 @@ func (this *facility) load(jsonName string)  {
 
 	fmt.Println(this)
 }
-

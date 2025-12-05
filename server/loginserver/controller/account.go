@@ -3,15 +3,15 @@ package controller
 import (
 	"time"
 
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/loginserver/model"
+	"github.com/fan785396456/slgserver/server/loginserver/proto"
+	"github.com/fan785396456/slgserver/util"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/loginserver/model"
-	"github.com/llr104/slgserver/server/loginserver/proto"
-	"github.com/llr104/slgserver/util"
 	"go.uber.org/zap"
 )
 

@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/server/slgserver/ILogic"
-	"github.com/llr104/slgserver/server/slgserver/global"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/logic/union"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/general"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/server/slgserver/ILogic"
+	"github.com/fan785396456/slgserver/server/slgserver/global"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/union"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/general"
+	"github.com/fan785396456/slgserver/util"
 	"go.uber.org/zap"
 )
 
@@ -81,7 +81,7 @@ func NewEmptyWar(attack *model.Army) *model.WarReport {
 	return wr
 }
 
-//简单战斗
+// 简单战斗
 func NewBattle(attackArmy *model.Army, armyLogic ILogic.IArmyLogic) *Battle {
 	battle := Battle{
 		attackArmy: attackArmy,

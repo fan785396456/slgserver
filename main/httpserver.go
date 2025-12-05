@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/server/httpserver/controller"
 	"github.com/labstack/echo/v4"
 	mw "github.com/labstack/echo/v4/middleware"
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/server/httpserver/controller"
 )
 
 func main() {

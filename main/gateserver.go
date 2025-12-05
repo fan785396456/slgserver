@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/gateserver"
-	"github.com/llr104/slgserver/server/gateserver/controller"
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/gateserver"
+	"github.com/fan785396456/slgserver/server/gateserver/controller"
 )
 
 func getGateServerAddr() string {

@@ -4,9 +4,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +19,7 @@ var UnionMgr = &coalitionMgr{
 	unions: make(map[int]*model.Coalition),
 }
 
-func (this*coalitionMgr) Load() {
+func (this *coalitionMgr) Load() {
 
 	rr := make([]*model.Coalition, 0)
 	err := db.MasterDB.Where("state=?", model.UnionRunning).Find(&rr)
@@ -32,8 +32,7 @@ func (this*coalitionMgr) Load() {
 	}
 }
 
-
-func (this*coalitionMgr) Get(unionId int) (*model.Coalition, bool){
+func (this *coalitionMgr) Get(unionId int) (*model.Coalition, bool) {
 
 	this.mutex.RLock()
 	r, ok := this.unions[unionId]
@@ -53,18 +52,18 @@ func (this*coalitionMgr) Get(unionId int) (*model.Coalition, bool){
 		this.mutex.Unlock()
 
 		return m, true
-	}else{
-		if err == nil{
+	} else {
+		if err == nil {
 			log.DefaultLog.Warn("coalitionMgr not found", zap.Int("unionId", unionId))
 			return nil, false
-		}else{
+		} else {
 			log.DefaultLog.Warn("db error", zap.Error(err))
 			return nil, false
 		}
 	}
 }
 
-func (this*coalitionMgr) Create(name string, rid int) (*model.Coalition, bool){
+func (this *coalitionMgr) Create(name string, rid int) (*model.Coalition, bool) {
 	m := &model.Coalition{Name: name, Ctime: time.Now(),
 		CreateId: rid, Chairman: rid, State: model.UnionRunning, MemberArray: []int{rid}}
 
@@ -76,13 +75,13 @@ func (this*coalitionMgr) Create(name string, rid int) (*model.Coalition, bool){
 		this.mutex.Unlock()
 
 		return m, true
-	}else{
+	} else {
 		log.DefaultLog.Error("db error", zap.Error(err))
 		return nil, false
 	}
 }
 
-func (this*coalitionMgr) List() []*model.Coalition {
+func (this *coalitionMgr) List() []*model.Coalition {
 	r := make([]*model.Coalition, 0)
 	this.mutex.RLock()
 	for _, coalition := range this.unions {
@@ -92,9 +91,8 @@ func (this*coalitionMgr) List() []*model.Coalition {
 	return r
 }
 
-func (this*coalitionMgr) Remove(unionId int)  {
+func (this *coalitionMgr) Remove(unionId int) {
 	this.mutex.Lock()
 	delete(this.unions, unionId)
 	this.mutex.Unlock()
 }
-

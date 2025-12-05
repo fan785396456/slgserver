@@ -1,6 +1,6 @@
 package ILogic
 
-import "github.com/llr104/slgserver/server/slgserver/model"
+import "github.com/fan785396456/slgserver/server/slgserver/model"
 
 type IArmyLogic interface {
 	ArmyBack(army *model.Army)

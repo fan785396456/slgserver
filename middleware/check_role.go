@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/net"
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/net"
 	"go.uber.org/zap"
 )
 

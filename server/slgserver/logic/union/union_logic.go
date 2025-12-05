@@ -3,9 +3,9 @@ package union
 import (
 	"sync"
 
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
 	"go.uber.org/zap"
 )
 
@@ -118,7 +118,7 @@ func (this *UnionLogic) MemberExit(rid int) {
 	}
 }
 
-//解散
+// 解散
 func (this *UnionLogic) Dismiss(unionId int) {
 	u, ok := mgr.UnionMgr.Get(unionId)
 	if ok {

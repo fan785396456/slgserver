@@ -7,21 +7,20 @@ import (
 	"os"
 	"path"
 
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/log"
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/log"
 	"go.uber.org/zap"
 )
 
 var Skill skill
 
 type skill struct {
-	skills []Conf
+	skills       []Conf
 	skillConfMap map[int]Conf
-	outline outline
+	outline      outline
 }
 
-
-func (this *skill) Load()  {
+func (this *skill) Load() {
 	this.skills = make([]Conf, 0)
 	this.skillConfMap = make(map[int]Conf)
 
@@ -47,22 +46,21 @@ func (this *skill) Load()  {
 		}
 	}
 
-
 	fmt.Println(this)
 }
 
 func (this *skill) readSkill(dir string) {
 	rd, err := ioutil.ReadDir(dir)
-	if err == nil{
+	if err == nil {
 		for _, r := range rd {
-			if r.IsDir() == false{
+			if r.IsDir() == false {
 				jdata, err := ioutil.ReadFile(path.Join(dir, r.Name()))
 				if err == nil {
 					conf := Conf{}
-					if err := json.Unmarshal(jdata, &conf); err == nil{
+					if err := json.Unmarshal(jdata, &conf); err == nil {
 						this.skills = append(this.skills, conf)
 						this.skillConfMap[conf.CfgId] = conf
-					}else{
+					} else {
 						log.DefaultLog.Warn("Unmarshal skill error", zap.Error(err),
 							zap.String("file", path.Join(dir, r.Name())))
 					}

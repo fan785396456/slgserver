@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/llr104/slgserver/config"
+	"github.com/fan785396456/slgserver/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -23,13 +23,13 @@ func init() {
 	compress := config.File.MustBool("log", "compress", true)
 
 	sa := strings.Split(filepath.Base(os.Args[0]), ".")
-	fileName :=  sa[0]+".log"
+	fileName := sa[0] + ".log"
 	hook := lumberjack.Logger{
-		Filename:   path.Join(fileDir, fileName),       // 日志文件路径
-		MaxSize:    maxSize,    // 每个日志文件保存的最大尺寸 单位：M
-		MaxBackups: maxBackups, // 日志文件最多保存多少个备份
-		MaxAge:     maxAge,     // 文件最多保存多少天
-		Compress:   compress,   // 是否压缩
+		Filename:   path.Join(fileDir, fileName), // 日志文件路径
+		MaxSize:    maxSize,                      // 每个日志文件保存的最大尺寸 单位：M
+		MaxBackups: maxBackups,                   // 日志文件最多保存多少个备份
+		MaxAge:     maxAge,                       // 文件最多保存多少天
+		Compress:   compress,                     // 是否压缩
 	}
 
 	encoderConfig := zapcore.EncoderConfig{

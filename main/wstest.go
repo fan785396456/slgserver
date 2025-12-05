@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/fan785396456/slgserver/net"
+	proto2 "github.com/fan785396456/slgserver/server/loginserver/proto"
+	"github.com/fan785396456/slgserver/util"
 	"github.com/forgoer/openssl"
 	"github.com/goinggo/mapstructure"
 	"github.com/gorilla/websocket"
-	"github.com/llr104/slgserver/net"
-	proto2 "github.com/llr104/slgserver/server/loginserver/proto"
-	"github.com/llr104/slgserver/util"
 )
 
 var origin = "httpserver://127.0.0.1:8002/"
@@ -29,10 +29,10 @@ func main() {
 	go do(conn)
 	go timeWriter(conn)
 
-	time.Sleep(10*time.Second)
+	time.Sleep(10 * time.Second)
 }
 
-func do(conn *websocket.Conn)  {
+func do(conn *websocket.Conn) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Printf("%s\n", err)
@@ -44,8 +44,8 @@ func do(conn *websocket.Conn)  {
 		msg := &net.RspBody{}
 		if len(secretKey) == 0 {
 			message, _ = util.UnZip(message)
-			if err := util.Unmarshal(message, msg); err == nil{
-				if msg.Name == "handshake"{
+			if err := util.Unmarshal(message, msg); err == nil {
+				if msg.Name == "handshake" {
 					h := &net.Handshake{}
 					mapstructure.Decode(msg.Msg, h)
 
@@ -53,7 +53,7 @@ func do(conn *websocket.Conn)  {
 				}
 				fmt.Println(msg.Name)
 			}
-		}else{
+		} else {
 			message, _ = util.UnZip(message)
 			data, err := util.AesCBCDecrypt(message, secretKey, secretKey, openssl.ZEROS_PADDING)
 			if err == nil {
@@ -64,38 +64,38 @@ func do(conn *websocket.Conn)  {
 						mapstructure.Decode(msg.Msg, lr)
 						session = lr.Session
 					}
-				}else{
+				} else {
 					secretKey = []byte("")
 				}
-			}else{
+			} else {
 				secretKey = []byte("")
 			}
 		}
 	}
 }
 
-func login(conn *websocket.Conn)  {
+func login(conn *websocket.Conn) {
 	l := &proto2.LoginReq{Ip: "127.0.0.1", Username: "test", Password: "123456"}
 	send(conn, "login", l)
 }
 
-func reLogin(conn *websocket.Conn, session string)  {
+func reLogin(conn *websocket.Conn, session string) {
 	l := &proto2.ReLoginReq{Session: session}
 	fmt.Println(session)
 	send(conn, "reLogin", l)
 }
 
-func logout(conn *websocket.Conn)  {
+func logout(conn *websocket.Conn) {
 	l := &proto2.LogoutReq{UId: 5}
 	send(conn, "logout", l)
 }
 
-func send(conn *websocket.Conn, name string, dd interface{})  {
+func send(conn *websocket.Conn, name string, dd interface{}) {
 	msg := &net.ReqBody{Name: name, Msg: dd}
 
 	if len(secretKey) == 0 {
 
-	}else{
+	} else {
 		if data, err := util.Marshal(msg); err == nil {
 			data, _ := util.AesCBCEncrypt(data, secretKey, secretKey, openssl.ZEROS_PADDING)
 			data, _ = util.Zip(data)

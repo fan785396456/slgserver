@@ -3,24 +3,23 @@ package controller
 import (
 	"time"
 
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/facility"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/facility"
 )
 
 var DefaultInterior = Interior{}
 
 type Interior struct {
-
 }
 
-func (this*Interior) InitRouter(r *net.Router) {
+func (this *Interior) InitRouter(r *net.Router) {
 	g := r.Group("interior").Use(middleware.ElapsedTime(),
 		middleware.Log(), middleware.CheckRole())
 	g.AddRouter("collect", this.collect)
@@ -29,7 +28,7 @@ func (this*Interior) InitRouter(r *net.Router) {
 
 }
 
-func (this*Interior) collect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *Interior) collect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.CollectionReq{}
 	rspObj := &proto.CollectionRsp{}
 
@@ -39,13 +38,13 @@ func (this*Interior) collect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	r, _ := req.Conn.GetProperty("role")
 	role := r.(*model.Role)
-	roleRes, ok:= mgr.RResMgr.Get(role.RId)
+	roleRes, ok := mgr.RResMgr.Get(role.RId)
 	if ok == false {
 		rsp.Body.Code = constant.DBError
 		return
 	}
 
-	roleAttr, ok:= mgr.RAttrMgr.Get(role.RId)
+	roleAttr, ok := mgr.RAttrMgr.Get(role.RId)
 	if ok == false {
 		rsp.Body.Code = constant.DBError
 		return
@@ -53,21 +52,21 @@ func (this*Interior) collect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	curTime := time.Now()
 	lastTime := roleAttr.LastCollectTime
-	if curTime.YearDay() != lastTime.YearDay() || curTime.Year() != lastTime.Year(){
+	if curTime.YearDay() != lastTime.YearDay() || curTime.Year() != lastTime.Year() {
 		roleAttr.CollectTimes = 0
 		roleAttr.LastCollectTime = time.Time{}
 	}
 
 	timeLimit := static_conf.Basic.Role.CollectTimesLimit
 	//是否超过征收次数上限
-	if roleAttr.CollectTimes >= timeLimit{
+	if roleAttr.CollectTimes >= timeLimit {
 		rsp.Body.Code = constant.OutCollectTimesLimit
 		return
 	}
 
 	//cd内不能操作
-	need := lastTime.Add(time.Duration(static_conf.Basic.Role.CollectTimesLimit)*time.Second)
-	if curTime.Before(need){
+	need := lastTime.Add(time.Duration(static_conf.Basic.Role.CollectTimesLimit) * time.Second)
+	if curTime.Before(need) {
 		rsp.Body.Code = constant.InCdCanNotOperate
 		return
 	}
@@ -83,12 +82,12 @@ func (this*Interior) collect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	interval := static_conf.Basic.Role.CollectInterval
 	if roleAttr.CollectTimes >= timeLimit {
-		y, m, d := roleAttr.LastCollectTime.Add(24*time.Hour).Date()
+		y, m, d := roleAttr.LastCollectTime.Add(24 * time.Hour).Date()
 		nextTime := time.Date(y, m, d, 0, 0, 0, 0, time.FixedZone("IST", 3600))
-		rspObj.NextTime = nextTime.UnixNano()/1e6
-	}else{
-		nextTime := roleAttr.LastCollectTime.Add(time.Duration(interval)*time.Second)
-		rspObj.NextTime = nextTime.UnixNano()/1e6
+		rspObj.NextTime = nextTime.UnixNano() / 1e6
+	} else {
+		nextTime := roleAttr.LastCollectTime.Add(time.Duration(interval) * time.Second)
+		rspObj.NextTime = nextTime.UnixNano() / 1e6
 	}
 
 	rspObj.CurTimes = roleAttr.CollectTimes
@@ -96,7 +95,7 @@ func (this*Interior) collect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 }
 
-func (this*Interior) openCollect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *Interior) openCollect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.OpenCollectionReq{}
 	rspObj := &proto.OpenCollectionRsp{}
 
@@ -106,7 +105,7 @@ func (this*Interior) openCollect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	r, _ := req.Conn.GetProperty("role")
 	role := r.(*model.Role)
-	roleAttr, ok:= mgr.RAttrMgr.Get(role.RId)
+	roleAttr, ok := mgr.RAttrMgr.Get(role.RId)
 	if ok == false {
 		rsp.Body.Code = constant.DBError
 		return
@@ -118,20 +117,19 @@ func (this*Interior) openCollect(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rspObj.CurTimes = roleAttr.CollectTimes
 	if roleAttr.LastCollectTime.IsZero() {
 		rspObj.NextTime = 0
-	}else{
+	} else {
 		if roleAttr.CollectTimes >= timeLimit {
-			y, m, d := roleAttr.LastCollectTime.Add(24*time.Hour).Date()
+			y, m, d := roleAttr.LastCollectTime.Add(24 * time.Hour).Date()
 			nextTime := time.Date(y, m, d, 0, 0, 0, 0, time.FixedZone("IST", 3600))
-			rspObj.NextTime = nextTime.UnixNano()/1e6
-		}else{
-			nextTime := roleAttr.LastCollectTime.Add(time.Duration(interval)*time.Second)
-			rspObj.NextTime = nextTime.UnixNano()/1e6
+			rspObj.NextTime = nextTime.UnixNano() / 1e6
+		} else {
+			nextTime := roleAttr.LastCollectTime.Add(time.Duration(interval) * time.Second)
+			rspObj.NextTime = nextTime.UnixNano() / 1e6
 		}
 	}
 }
 
-
-func (this*Interior) transform(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
+func (this *Interior) transform(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.TransformReq{}
 	rspObj := &proto.TransformRsp{}
 
@@ -141,7 +139,7 @@ func (this*Interior) transform(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	r, _ := req.Conn.GetProperty("role")
 	role := r.(*model.Role)
-	roleRes, ok:= mgr.RResMgr.Get(role.RId)
+	roleRes, ok := mgr.RResMgr.Get(role.RId)
 	if ok == false {
 		rsp.Body.Code = constant.DBError
 		return
@@ -150,7 +148,7 @@ func (this*Interior) transform(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	main, _ := mgr.RCMgr.GetMainCity(role.RId)
 
 	lv := mgr.RFMgr.GetFacilityLv(main.CityId, facility.JiShi)
-	if lv <= 0{
+	if lv <= 0 {
 		rsp.Body.Code = constant.NotHasJiShi
 		return
 	}
@@ -158,34 +156,33 @@ func (this*Interior) transform(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	len := 4
 	ret := make([]int, len)
 
-	for i := 0 ;i < len; i++{
+	for i := 0; i < len; i++ {
 		//ret[i] = reqObj.To[i] - reqObj.From[i]
-		if reqObj.From[i] > 0{
+		if reqObj.From[i] > 0 {
 			ret[i] = -reqObj.From[i]
 		}
 
-		if reqObj.To[i] > 0{
+		if reqObj.To[i] > 0 {
 			ret[i] = reqObj.To[i]
 		}
 	}
 
-
-	if roleRes.Wood + ret[0] < 0{
+	if roleRes.Wood+ret[0] < 0 {
 		rsp.Body.Code = constant.InvalidParam
 		return
 	}
 
-	if roleRes.Iron + ret[1] < 0{
+	if roleRes.Iron+ret[1] < 0 {
 		rsp.Body.Code = constant.InvalidParam
 		return
 	}
 
-	if roleRes.Stone + ret[2] < 0{
+	if roleRes.Stone+ret[2] < 0 {
 		rsp.Body.Code = constant.InvalidParam
 		return
 	}
 
-	if roleRes.Grain + ret[3] < 0{
+	if roleRes.Grain+ret[3] < 0 {
 		rsp.Body.Code = constant.InvalidParam
 		return
 	}
@@ -197,4 +194,3 @@ func (this*Interior) transform(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	roleRes.SyncExecute()
 
 }
-

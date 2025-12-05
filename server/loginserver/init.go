@@ -1,9 +1,9 @@
 package loginserver
 
 import (
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/loginserver/controller"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/loginserver/controller"
 )
 
 var MyRouter = &net.Router{}

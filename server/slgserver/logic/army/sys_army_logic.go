@@ -3,11 +3,11 @@ package army
 import (
 	"sync"
 
-	"github.com/llr104/slgserver/server/slgserver/global"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/npc"
+	"github.com/fan785396456/slgserver/server/slgserver/global"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/npc"
 )
 
 func NewSysArmy() *sysArmyLogic {

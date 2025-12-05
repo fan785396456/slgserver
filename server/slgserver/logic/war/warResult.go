@@ -3,11 +3,11 @@ package war
 import (
 	"math/rand"
 
-	"github.com/llr104/slgserver/server/slgserver/global"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/general"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/skill"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/server/slgserver/global"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/general"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/skill"
+	"github.com/fan785396456/slgserver/util"
 )
 
 const maxRound = 10

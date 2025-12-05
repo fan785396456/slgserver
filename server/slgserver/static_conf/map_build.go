@@ -7,14 +7,13 @@ import (
 	"os"
 	"path"
 
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/log"
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/log"
 	"go.uber.org/zap"
 )
 
-//地图资源配置
+// 地图资源配置
 var MapBuildConf mapBuildConf
-
 
 type cfg struct {
 	Type     int8   `json:"type"`
@@ -28,14 +27,13 @@ type cfg struct {
 	Defender int    `json:"defender"`
 }
 
-
 type mapBuildConf struct {
-	Title   string   `json:"title"`
-	Cfg		[]cfg `json:"cfg"`
-	cfgMap  map[int8][]cfg
+	Title  string `json:"title"`
+	Cfg    []cfg  `json:"cfg"`
+	cfgMap map[int8][]cfg
 }
 
-func (this *mapBuildConf) Load()  {
+func (this *mapBuildConf) Load() {
 	jsonDir := config.File.MustValue("logic", "json_data", "../data/conf/")
 	fileName := path.Join(jsonDir, "map_build.json")
 	jdata, err := ioutil.ReadFile(fileName)
@@ -46,10 +44,9 @@ func (this *mapBuildConf) Load()  {
 
 	json.Unmarshal(jdata, this)
 
-
 	this.cfgMap = make(map[int8][]cfg)
 	for _, v := range this.Cfg {
-		if _, ok := this.cfgMap[v.Type]; ok == false{
+		if _, ok := this.cfgMap[v.Type]; ok == false {
 			this.cfgMap[v.Type] = make([]cfg, 0)
 		}
 		this.cfgMap[v.Type] = append(this.cfgMap[v.Type], v)
@@ -58,7 +55,7 @@ func (this *mapBuildConf) Load()  {
 	fmt.Println(this)
 }
 
-func (this*mapBuildConf) BuildConfig(cfgType int8, level int8) (*cfg, bool) {
+func (this *mapBuildConf) BuildConfig(cfgType int8, level int8) (*cfg, bool) {
 	if c, ok := this.cfgMap[cfgType]; ok {
 		for _, v := range c {
 			if v.Level == level {
@@ -69,4 +66,3 @@ func (this*mapBuildConf) BuildConfig(cfgType int8, level int8) (*cfg, bool) {
 
 	return nil, false
 }
-

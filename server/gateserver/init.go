@@ -1,8 +1,8 @@
 package gateserver
 
 import (
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/gateserver/controller"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/gateserver/controller"
 )
 
 var MyRouter = &net.Router{}

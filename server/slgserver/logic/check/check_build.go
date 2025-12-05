@@ -1,12 +1,12 @@
 package check
 
 import (
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/logic/union"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/union"
+	"github.com/fan785396456/slgserver/util"
 )
 
-//是否能到达
+// 是否能到达
 func IsCanArrive(x, y, rid int) bool {
 	var radius = 0
 	unionId := union.GetUnionId(rid)
@@ -85,7 +85,7 @@ func IsCanDefend(x, y, rid int) bool {
 	return false
 }
 
-//是否是免战
+// 是否是免战
 func IsWarFree(x, y int) bool {
 	b, ok := mgr.RBMgr.PositionBuild(x, y)
 	if ok {

@@ -3,19 +3,19 @@ package controller
 import (
 	"net/http"
 
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/log"
+	myhttp "github.com/fan785396456/slgserver/server/httpserver"
+	"github.com/fan785396456/slgserver/server/httpserver/logic"
+	"github.com/fan785396456/slgserver/server/httpserver/middleware"
 	"github.com/labstack/echo/v4"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/log"
-	myhttp "github.com/llr104/slgserver/server/httpserver"
-	"github.com/llr104/slgserver/server/httpserver/logic"
-	"github.com/llr104/slgserver/server/httpserver/middleware"
 )
 
 type AccountController struct{}
 
 func (self AccountController) RegisterRoutes(g *echo.Group) {
 	g.Use(middleware.Cors())
-	
+
 	g.Any("/account/register", self.register)
 	g.Any("/account/changepwd", self.changePwd)
 	g.Any("/account/forgetpwd", self.forgetPwd)
@@ -28,7 +28,7 @@ func (self AccountController) register(ctx echo.Context) error {
 	if err := logic.DefaultUser.CreateUser(ctx); err != nil {
 		data["code"] = err.(*myhttp.MyError).Id()
 		data["errmsg"] = err.(*myhttp.MyError).Error()
-	}else{
+	} else {
 		data["code"] = constant.OK
 	}
 
@@ -49,7 +49,7 @@ func (self AccountController) changePwd(ctx echo.Context) error {
 	if err := logic.DefaultUser.ChangePassword(ctx); err != nil {
 		data["code"] = err.(*myhttp.MyError).Id()
 		data["errmsg"] = err.(*myhttp.MyError).Error()
-	}else{
+	} else {
 		data["code"] = constant.OK
 	}
 
@@ -62,4 +62,3 @@ func (self AccountController) resetPwd(ctx echo.Context) error {
 	ctx.String(http.StatusOK, "resetPwd")
 	return nil
 }
-

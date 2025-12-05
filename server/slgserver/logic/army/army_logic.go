@@ -4,13 +4,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/llr104/slgserver/server/slgserver/global"
-	"github.com/llr104/slgserver/server/slgserver/logic/check"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/logic/war"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/server/slgserver/global"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/check"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/war"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/util"
 )
 
 var _armyLogic *ArmyLogic = nil
@@ -406,7 +406,7 @@ func (this *ArmyLogic) addAction(t int64, army *model.Army) {
 	this.endTimeArmys[t] = append(this.endTimeArmys[t], army)
 }
 
-//把行动丢进来
+// 把行动丢进来
 func (this *ArmyLogic) PushAction(army *model.Army) {
 
 	if army.Cmd == model.ArmyCmdAttack ||

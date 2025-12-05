@@ -3,11 +3,11 @@ package mgr
 import (
 	"sync"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/facility"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/facility"
 	"go.uber.org/zap"
 )
 
@@ -155,7 +155,7 @@ func (this *armyMgr) GetByRId(rid int) ([]*model.Army, bool) {
 	return as, ok
 }
 
-//归属于该位置的军队数量
+// 归属于该位置的军队数量
 func (this *armyMgr) BelongPosArmyCnt(rid int, x, y int) int {
 	cnt := 0
 	armys, ok := this.GetByRId(rid)
@@ -240,7 +240,7 @@ func (this *armyMgr) GetSpeed(army *model.Army) int {
 	return speed + campAdds[0]
 }
 
-//能否已经重复上阵了
+// 能否已经重复上阵了
 func (this *armyMgr) IsRepeat(rid int, cfgId int) bool {
 	armys, ok := this.GetByRId(rid)
 	if ok == false {

@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
 )
 
 var DefaultCity = City{}
@@ -63,7 +63,7 @@ func (this *City) facilities(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 }
 
-//升级需要耗费时间，为了减少定时任务，升级这里做成被动触发产生，不做定时任务
+// 升级需要耗费时间，为了减少定时任务，升级这里做成被动触发产生，不做定时任务
 func (this *City) upFacility(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.UpFacilityReq{}
 	rspObj := &proto.UpFacilityRsp{}

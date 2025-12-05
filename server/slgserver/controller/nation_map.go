@@ -1,15 +1,15 @@
 package controller
 
 import (
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/logic"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/logic"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
 )
 
 var DefaultMap = NationMap{}
@@ -139,7 +139,7 @@ func (this *NationMap) giveUp(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rsp.Body.Code = mgr.RBMgr.GiveUp(x, y)
 }
 
-//建造
+// 建造
 func (this *NationMap) build(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.BuildReq{}
 	rspObj := &proto.BuildRsp{}

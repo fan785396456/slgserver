@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/global"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
-	"github.com/llr104/slgserver/util"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/global"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
+	"github.com/fan785396456/slgserver/util"
 	"go.uber.org/zap"
 	"xorm.io/xorm"
 )
@@ -68,7 +68,7 @@ func (this *armyDBMgr) push(army *Army) {
 
 /*******db 操作end********/
 
-//军队
+// 军队
 type Army struct {
 	Id                 int                            `xorm:"id pk autoincr"`
 	RId                int                            `xorm:"rid"`
@@ -99,7 +99,7 @@ func (this *Army) TableName() string {
 	return "tb_army" + fmt.Sprintf("_%d", ServerId)
 }
 
-//是否能出战
+// 是否能出战
 func (this *Army) IsCanOutWar() bool {
 	return this.Gens[0] != nil && this.Cmd == ArmyCmdIdle
 }
@@ -176,7 +176,7 @@ func (this *Army) ToGeneral() {
 	this.Generals = string(data)
 }
 
-//获取军队阵营
+// 获取军队阵营
 func (this *Army) GetCamp() int8 {
 	var camp int8 = 0
 	for _, g := range this.Gens {
@@ -194,7 +194,7 @@ func (this *Army) GetCamp() int8 {
 	return camp
 }
 
-//检测征兵是否完成，服务器不做定时任务，用到的时候再检测
+// 检测征兵是否完成，服务器不做定时任务，用到的时候再检测
 func (this *Army) CheckConscript() {
 	if this.Cmd == ArmyCmdConscript {
 		curTime := time.Now().Unix()
@@ -217,7 +217,7 @@ func (this *Army) CheckConscript() {
 	}
 }
 
-//队伍指定的位置是否能变化（上下阵）
+// 队伍指定的位置是否能变化（上下阵）
 func (this *Army) PositionCanModify(position int) bool {
 	if position >= 3 || position < 0 {
 		return false

@@ -1,6 +1,6 @@
 # slg游戏服务器demo
 
-## 客户端demo：https://github.com/llr104/slgclient
+## 客户端demo：https://github.com/fan785396456/slgclient
 **鄙视b站、抖音 up主码神之路，从这里拿demo讲课也不说出处，忽悠小白是自己写的**
 
 **代码交流群：1054084192**

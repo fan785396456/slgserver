@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fan785396456/slgserver/config"
 	_ "github.com/lib/pq"
-	"github.com/llr104/slgserver/config"
 	"xorm.io/xorm"
 	"xorm.io/xorm/log"
 )

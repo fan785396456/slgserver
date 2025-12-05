@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/llr104/slgserver/config"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/chatserver"
+	"github.com/fan785396456/slgserver/config"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/chatserver"
 )
 
 func getChatServerAddr() string {

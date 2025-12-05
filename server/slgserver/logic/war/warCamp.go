@@ -3,10 +3,10 @@ package war
 import (
 	"math/rand"
 
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/facility"
-	"github.com/llr104/slgserver/server/slgserver/static_conf/skill"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/facility"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf/skill"
 )
 
 type attachSkill struct {
@@ -34,7 +34,7 @@ func newCamp(attack *model.Army, defense *model.Army) *warCamp {
 	return c
 }
 
-//初始化军队和武将属性、兵种、加成等
+// 初始化军队和武将属性、兵种、加成等
 func (this *warCamp) init() {
 
 	//城内设施加成
@@ -112,7 +112,7 @@ func (this *warCamp) init() {
 
 }
 
-//随机一个目标位置
+// 随机一个目标位置
 func (this *warCamp) randArmyPosition(pos []*armyPosition) (*armyPosition, int) {
 	isEmpty := true
 	for _, v := range pos {
@@ -137,7 +137,7 @@ func (this *warCamp) randArmyPosition(pos []*armyPosition) (*armyPosition, int) 
 	return nil, -1
 }
 
-//最多2个
+// 最多2个
 func (this *warCamp) randMostTwoArmyPosition(pos []*armyPosition) ([]*armyPosition, []int) {
 	i := make([]int, 0)
 	a := make([]*armyPosition, 0)
@@ -154,7 +154,7 @@ func (this *warCamp) randMostTwoArmyPosition(pos []*armyPosition) ([]*armyPositi
 	return a, i
 }
 
-//最多3个
+// 最多3个
 func (this *warCamp) randMostThreeArmyPosition(pos []*armyPosition) ([]*armyPosition, []int) {
 	i := make([]int, 0)
 	a := make([]*armyPosition, 0)

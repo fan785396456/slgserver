@@ -3,26 +3,23 @@ package controller
 import (
 	"time"
 
+	"github.com/fan785396456/slgserver/constant"
+	"github.com/fan785396456/slgserver/db"
+	"github.com/fan785396456/slgserver/log"
+	"github.com/fan785396456/slgserver/middleware"
+	"github.com/fan785396456/slgserver/net"
+	"github.com/fan785396456/slgserver/server/slgserver/logic"
+	"github.com/fan785396456/slgserver/server/slgserver/logic/mgr"
+	"github.com/fan785396456/slgserver/server/slgserver/model"
+	"github.com/fan785396456/slgserver/server/slgserver/proto"
+	"github.com/fan785396456/slgserver/server/slgserver/static_conf"
 	"github.com/goinggo/mapstructure"
-	"github.com/llr104/slgserver/constant"
-	"github.com/llr104/slgserver/db"
-	"github.com/llr104/slgserver/log"
-	"github.com/llr104/slgserver/middleware"
-	"github.com/llr104/slgserver/net"
-	"github.com/llr104/slgserver/server/slgserver/logic"
-	"github.com/llr104/slgserver/server/slgserver/logic/mgr"
-	"github.com/llr104/slgserver/server/slgserver/model"
-	"github.com/llr104/slgserver/server/slgserver/proto"
-	"github.com/llr104/slgserver/server/slgserver/static_conf"
 	"go.uber.org/zap"
 )
 
-var DefaultCoalition= coalition{
-
-}
+var DefaultCoalition = coalition{}
 
 type coalition struct {
-
 }
 
 func (this *coalition) InitRouter(r *net.Router) {
@@ -47,7 +44,7 @@ func (this *coalition) InitRouter(r *net.Router) {
 
 }
 
-//创建联盟
+// 创建联盟
 func (this *coalition) create(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.CreateReq{}
 	rspObj := &proto.CreateRsp{}
@@ -69,12 +66,12 @@ func (this *coalition) create(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 		rspObj.Id = c.Id
 		logic.Union.MemberEnter(role.RId, c.Id)
 		model.NewCreate(role.NickName, c.Id, role.RId)
-	}else{
+	} else {
 		rsp.Body.Code = constant.UnionCreateError
 	}
 }
 
-//联盟列表
+// 联盟列表
 func (this *coalition) list(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ListReq{}
 	rspObj := &proto.ListRsp{}
@@ -101,7 +98,7 @@ func (this *coalition) list(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 }
 
-//加入
+// 加入
 func (this *coalition) join(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.JoinReq{}
 	rspObj := &proto.JoinRsp{}
@@ -120,12 +117,12 @@ func (this *coalition) join(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 
 	u, ok := mgr.UnionMgr.Get(reqObj.Id)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
 
-	if len(u.MemberArray) >= static_conf.Basic.Union.MemberLimit{
+	if len(u.MemberArray) >= static_conf.Basic.Union.MemberLimit {
 		rsp.Body.Code = constant.PeopleIsFull
 		return
 	}
@@ -147,7 +144,7 @@ func (this *coalition) join(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 		State:   proto.UnionUntreated}
 
 	_, err := db.MasterDB.InsertOne(apply)
-	if err != nil{
+	if err != nil {
 		rsp.Body.Code = constant.DBError
 		log.DefaultLog.Warn("db error", zap.Error(err))
 		return
@@ -157,7 +154,7 @@ func (this *coalition) join(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	apply.SyncExecute()
 }
 
-//审核
+// 审核
 func (this *coalition) verify(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	reqObj := &proto.VerifyReq{}
@@ -170,13 +167,12 @@ func (this *coalition) verify(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	r, _ := req.Conn.GetProperty("role")
 	role := r.(*model.Role)
 
-
 	apply := &model.CoalitionApply{}
 	ok, err := db.MasterDB.Table(model.CoalitionApply{}).Where(
 		"id=? and state=?", reqObj.Id, proto.UnionUntreated).Get(apply)
-	if ok && err == nil{
+	if ok && err == nil {
 		targetRole, ok := mgr.RMgr.Get(apply.RId)
-		if ok == false{
+		if ok == false {
 			rsp.Body.Code = constant.RoleNotExist
 			return
 		}
@@ -188,14 +184,14 @@ func (this *coalition) verify(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 				return
 			}
 
-			if len(u.MemberArray) >= static_conf.Basic.Union.MemberLimit{
+			if len(u.MemberArray) >= static_conf.Basic.Union.MemberLimit {
 				rsp.Body.Code = constant.PeopleIsFull
 				return
 			}
 
 			if ok := mgr.RAttrMgr.IsHasUnion(apply.RId); ok {
 				rsp.Body.Code = constant.UnionAlreadyHas
-			}else{
+			} else {
 				if reqObj.Decide == proto.UnionAdopt {
 					//同意
 					c, ok := mgr.UnionMgr.Get(apply.UnionId)
@@ -209,18 +205,18 @@ func (this *coalition) verify(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 			}
 			apply.State = reqObj.Decide
 			db.MasterDB.Table(apply).ID(apply.Id).Cols("state").Update(apply)
-		}else{
+		} else {
 			rsp.Body.Code = constant.UnionNotFound
 			return
 		}
 
-	}else{
+	} else {
 		rsp.Body.Code = constant.InvalidParam
 	}
 
 }
 
-//成员列表
+// 成员列表
 func (this *coalition) member(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.MemberReq{}
 	rspObj := &proto.MemberRsp{}
@@ -230,7 +226,7 @@ func (this *coalition) member(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rsp.Body.Code = constant.OK
 
 	union, ok := mgr.UnionMgr.Get(reqObj.Id)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -238,7 +234,7 @@ func (this *coalition) member(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rspObj.Members = make([]proto.Member, 0)
 	for _, rid := range union.MemberArray {
 		if role, ok := mgr.RMgr.Get(rid); ok {
-			m := proto.Member{RId: role.RId, Name: role.NickName }
+			m := proto.Member{RId: role.RId, Name: role.NickName}
 			if main, ok := mgr.RCMgr.GetMainCity(role.RId); ok {
 				m.X = main.X
 				m.Y = main.Y
@@ -246,9 +242,9 @@ func (this *coalition) member(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 			if rid == union.Chairman {
 				m.Title = proto.UnionChairman
-			}else if rid == union.ViceChairman {
+			} else if rid == union.ViceChairman {
 				m.Title = proto.UnionViceChairman
-			}else {
+			} else {
 				m.Title = proto.UnionCommon
 			}
 			rspObj.Members = append(rspObj.Members, m)
@@ -256,8 +252,7 @@ func (this *coalition) member(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 }
 
-
-//申请列表
+// 申请列表
 func (this *coalition) applyList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ApplyReq{}
 	rspObj := &proto.ApplyRsp{}
@@ -270,7 +265,7 @@ func (this *coalition) applyList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	role := r.(*model.Role)
 
 	u, ok := mgr.UnionMgr.Get(reqObj.Id)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -283,7 +278,7 @@ func (this *coalition) applyList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	applys := make([]*model.CoalitionApply, 0)
 	err := db.MasterDB.Table(model.CoalitionApply{}).Where(
 		"union_id=? and state=?", reqObj.Id, 0).Find(&applys)
-	if err != nil{
+	if err != nil {
 		rsp.Body.Code = constant.DBError
 		return
 	}
@@ -291,14 +286,14 @@ func (this *coalition) applyList(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rspObj.Id = reqObj.Id
 	rspObj.Applys = make([]proto.ApplyItem, 0)
 	for _, apply := range applys {
-		if r, ok := mgr.RMgr.Get(apply.RId);ok{
+		if r, ok := mgr.RMgr.Get(apply.RId); ok {
 			a := proto.ApplyItem{Id: apply.Id, RId: apply.RId, NickName: r.NickName}
 			rspObj.Applys = append(rspObj.Applys, a)
 		}
 	}
 }
 
-//退出
+// 退出
 func (this *coalition) exit(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ExitReq{}
 	rspObj := &proto.ExitRsp{}
@@ -317,7 +312,7 @@ func (this *coalition) exit(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	attribute, _ := mgr.RAttrMgr.Get(role.RId)
 	u, ok := mgr.UnionMgr.Get(attribute.UnionId)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -329,12 +324,12 @@ func (this *coalition) exit(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 
 	for i, rid := range u.MemberArray {
-		if rid == role.RId{
+		if rid == role.RId {
 			u.MemberArray = append(u.MemberArray[:i], u.MemberArray[i+1:]...)
 		}
 	}
 
-	if u.ViceChairman == role.RId{
+	if u.ViceChairman == role.RId {
 		u.ViceChairman = 0
 	}
 
@@ -344,8 +339,7 @@ func (this *coalition) exit(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 }
 
-
-//解散
+// 解散
 func (this *coalition) dismiss(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.DismissReq{}
 	rspObj := &proto.DismissRsp{}
@@ -364,7 +358,7 @@ func (this *coalition) dismiss(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	attribute, _ := mgr.RAttrMgr.Get(role.RId)
 	u, ok := mgr.UnionMgr.Get(attribute.UnionId)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -380,7 +374,7 @@ func (this *coalition) dismiss(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	model.NewDismiss(role.NickName, unionId, role.RId)
 }
 
-//公告
+// 公告
 func (this *coalition) notice(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.NoticeReq{}
 	rspObj := &proto.NoticeRsp{}
@@ -389,7 +383,7 @@ func (this *coalition) notice(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rsp.Body.Code = constant.OK
 
 	u, ok := mgr.UnionMgr.Get(reqObj.Id)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -397,7 +391,7 @@ func (this *coalition) notice(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rspObj.Text = u.Notice
 }
 
-//修改公告
+// 修改公告
 func (this *coalition) modNotice(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.ModNoticeReq{}
 	rspObj := &proto.ModNoticeRsp{}
@@ -420,7 +414,7 @@ func (this *coalition) modNotice(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	attribute, _ := mgr.RAttrMgr.Get(role.RId)
 	u, ok := mgr.UnionMgr.Get(attribute.UnionId)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -438,7 +432,7 @@ func (this *coalition) modNotice(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	model.NewModNotice(role.NickName, u.Id, role.RId)
 }
 
-//踢人
+// 踢人
 func (this *coalition) kick(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.KickReq{}
 	rspObj := &proto.KickRsp{}
@@ -458,7 +452,7 @@ func (this *coalition) kick(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	opAr, _ := mgr.RAttrMgr.Get(role.RId)
 	u, ok := mgr.UnionMgr.Get(opAr.UnionId)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -481,13 +475,13 @@ func (this *coalition) kick(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	target, ok := mgr.RAttrMgr.Get(reqObj.RId)
 	if ok {
-		if target.UnionId == u.Id{
+		if target.UnionId == u.Id {
 			for i, rid := range u.MemberArray {
-				if rid == reqObj.RId{
+				if rid == reqObj.RId {
 					u.MemberArray = append(u.MemberArray[:i], u.MemberArray[i+1:]...)
 				}
 			}
-			if u.ViceChairman == reqObj.RId{
+			if u.ViceChairman == reqObj.RId {
 				u.ViceChairman = 0
 			}
 			logic.Union.MemberExit(reqObj.RId)
@@ -495,15 +489,15 @@ func (this *coalition) kick(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 			u.SyncExecute()
 
 			model.NewKick(role.NickName, targetRole.NickName, u.Id, role.RId, target.RId)
-		}else{
+		} else {
 			rsp.Body.Code = constant.NotBelongUnion
 		}
-	}else{
+	} else {
 		rsp.Body.Code = constant.NotBelongUnion
 	}
 }
 
-//任命
+// 任命
 func (this *coalition) appoint(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.AppointReq{}
 	rspObj := &proto.AppointRsp{}
@@ -523,7 +517,7 @@ func (this *coalition) appoint(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	opAr, _ := mgr.RAttrMgr.Get(role.RId)
 	u, ok := mgr.UnionMgr.Get(opAr.UnionId)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -541,31 +535,31 @@ func (this *coalition) appoint(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	target, ok := mgr.RAttrMgr.Get(reqObj.RId)
 	if ok {
-		if target.UnionId == u.Id{
+		if target.UnionId == u.Id {
 			if reqObj.Title == proto.UnionViceChairman {
 				u.ViceChairman = reqObj.RId
 				rspObj.Title = reqObj.Title
 				u.SyncExecute()
 				model.NewAppoint(role.NickName, targetRole.NickName, u.Id, role.RId, targetRole.RId, reqObj.Title)
-			}else if reqObj.Title == proto.UnionCommon {
-				if u.ViceChairman == reqObj.RId{
+			} else if reqObj.Title == proto.UnionCommon {
+				if u.ViceChairman == reqObj.RId {
 					u.ViceChairman = 0
 				}
 				rspObj.Title = reqObj.Title
 				model.NewAppoint(role.NickName, targetRole.NickName, u.Id, role.RId, targetRole.RId, reqObj.Title)
-			}else{
+			} else {
 				rsp.Body.Code = constant.InvalidParam
 			}
-		}else{
+		} else {
 			rsp.Body.Code = constant.NotBelongUnion
 		}
-	}else{
+	} else {
 		rsp.Body.Code = constant.NotBelongUnion
 	}
 
 }
 
-//禅让
+// 禅让
 func (this *coalition) abdicate(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.AbdicateReq{}
 	rspObj := &proto.AbdicateRsp{}
@@ -584,7 +578,7 @@ func (this *coalition) abdicate(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	opAr, _ := mgr.RAttrMgr.Get(role.RId)
 	u, ok := mgr.UnionMgr.Get(opAr.UnionId)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -602,33 +596,33 @@ func (this *coalition) abdicate(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	target, ok := mgr.RAttrMgr.Get(reqObj.RId)
 	if ok {
-		if target.UnionId == u.Id{
-			if role.RId == u.Chairman{
+		if target.UnionId == u.Id {
+			if role.RId == u.Chairman {
 				u.Chairman = reqObj.RId
-				if u.ViceChairman == reqObj.RId{
+				if u.ViceChairman == reqObj.RId {
 					u.ViceChairman = 0
 				}
 				u.SyncExecute()
 
 				model.NewAbdicate(role.NickName, targetRole.NickName, u.Id,
 					role.RId, targetRole.RId, proto.UnionChairman)
-			}else if role.RId == u.ViceChairman {
+			} else if role.RId == u.ViceChairman {
 				u.ViceChairman = reqObj.RId
 				u.SyncExecute()
 
 				model.NewAbdicate(role.NickName, targetRole.NickName, u.Id,
 					role.RId, targetRole.RId, proto.UnionViceChairman)
 			}
-		}else{
+		} else {
 			rsp.Body.Code = constant.NotBelongUnion
 		}
-	}else{
+	} else {
 		rsp.Body.Code = constant.NotBelongUnion
 	}
 
 }
 
-//联盟信息
+// 联盟信息
 func (this *coalition) info(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.InfoReq{}
 	rspObj := &proto.InfoRsp{}
@@ -639,9 +633,9 @@ func (this *coalition) info(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	rsp.Body.Code = constant.OK
 
 	u, ok := mgr.UnionMgr.Get(reqObj.Id)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
-	}else{
+	} else {
 		rspObj.Info = u.ToProto().(proto.Union)
 		main := make([]proto.Major, 0)
 		if r, ok := mgr.RMgr.Get(u.Chairman); ok {
@@ -657,7 +651,7 @@ func (this *coalition) info(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	}
 }
 
-//联盟日志
+// 联盟日志
 func (this *coalition) log(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	reqObj := &proto.LogReq{}
 	rspObj := &proto.LogRsp{}
@@ -672,7 +666,7 @@ func (this *coalition) log(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 
 	opAr, _ := mgr.RAttrMgr.Get(role.RId)
 	u, ok := mgr.UnionMgr.Get(opAr.UnionId)
-	if ok == false{
+	if ok == false {
 		rsp.Body.Code = constant.UnionNotFound
 		return
 	}
@@ -681,7 +675,7 @@ func (this *coalition) log(req *net.WsMsgReq, rsp *net.WsMsgRsp) {
 	logs := make([]*model.CoalitionLog, 0)
 	err := db.MasterDB.Table(model.CoalitionLog{}).Where(
 		"union_id=?", u.Id).Desc("ctime").Find(&logs)
-	if err != nil{
+	if err != nil {
 		log.DefaultLog.Warn("db error", zap.Error(err))
 	}
 
